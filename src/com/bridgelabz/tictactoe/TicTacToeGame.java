@@ -1,6 +1,7 @@
 package com.bridgelabz.tictactoe;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TicTacToeGame {
@@ -99,6 +100,20 @@ public class TicTacToeGame {
 		int userWinMove = isWinningMove(board, user);
 		if (userWinMove != 0)
 			return userWinMove;
+		int cornerMove= getCornerMove(board);
+        if(cornerMove!=0) return cornerMove;
+		return 0;
+	}
+
+	// Corner move
+	public static int getCornerMove(char[] board) {
+		int[] corners = { 1, 3, 7, 9 };
+
+		for (int index = 0; index < corners.length; index++) {
+			if (isFreeSpace(board, corners[index])) {
+				return corners[index];
+			}
+		}
 		return 0;
 	}
 
