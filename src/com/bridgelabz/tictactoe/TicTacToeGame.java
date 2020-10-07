@@ -33,7 +33,7 @@ public class TicTacToeGame {
 		}
 	}
 
-	// Method for user to make a move
+	// Method for user to select an index
 	public static int getUserIndex(Scanner scannerObj, char[] board) {
 		System.out.println("Make your move.\nEnter index ( 1 to 9)");
 		int index = scannerObj.nextInt();
@@ -51,7 +51,6 @@ public class TicTacToeGame {
 	// Method to make a move
 	public static void makeMove(char[] board, int index, char player) {
 		board[index] = player;
-		showBoard(board);
 	}
 
 	// Method to check free space
@@ -59,26 +58,9 @@ public class TicTacToeGame {
 		return board[index] == ' ';
 	}
 
-	// Method for toss
-	public static boolean toss(Scanner scannerObj) {
-		System.out.println("Choose Heads or Tails");
-		String userTossInput = scannerObj.next();
-		int tossValue = (int) Math.floor(Math.random() * 10) % 2;
-		String tossOutput = "";
-		if (tossValue == 0)
-			tossOutput = "Heads";
-		else
-			tossOutput = "Tails";
-		System.out.println("Toss outcome: " + tossOutput);
-
-		return tossOutput.equals(userTossInput);
-	}
-
 	public static Player whoStarts(Scanner scannerObj) {
-		if (toss(scannerObj))
-			return Player.USER;
-		else
-			return Player.COMPUTER;
+		int toss = (int) Math.floor(Math.random() * 10 % 2);
+		return (toss == 1) ? Player.USER : Player.COMPUTER;
 
 	}
 
@@ -97,27 +79,42 @@ public class TicTacToeGame {
 			return false;
 	}
 
+	// Method for computer move
+	public static int isWinningMove(char[] board, char index) {
+		for (int position = 1; position < board.length; position++) {
+			char[] copyOfBoard = board.clone();
+			if (isFreeSpace(copyOfBoard, position))
+				makeMove(copyOfBoard, position, index);
+			if (isWinningPosition(copyOfBoard, index))
+				return position;
+		}
+		return 0;
+	}
+
+	public static int getComputerMove(char[] board, char computer) {
+		int winMove = isWinningMove(board, computer);
+		if (winMove != 0)
+			return winMove;
+		return 0;
+	}
+
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
 		char[] board = createBoard();
-		Player player = whoStarts(scannerObj);
 		char user = chooseCharacterForPlayer(scannerObj);
 		char computer = (user == 'X') ? 'O' : 'X';
 		System.out.println("Player chooses: " + user);
 		System.out.println("Computer character: " + computer);
 		showBoard(board);
 
-		while (true) {
-			int userIndex = getUserIndex(scannerObj, board);
-			makeMove(board, userIndex, user);
-			if (isWinningPosition(board, user)) {
-				System.out.println("Player wins");
-				break;
-			}
-		}
-		String currentPlayer = (player == Player.USER) ? "User" : "Computer";
-		System.out.println("Current Player:- " + currentPlayer);
+		Player p = whoStarts(scannerObj);
+		System.out.println("Starts first:" + p);
+		int index = getUserIndex(scannerObj, board);
+		makeMove(board, index, user);
+		showBoard(board);
+		int compMove = getComputerMove(board, computer);
+		makeMove(board, compMove, computer);
+		showBoard(board);
 
 	}
-
 }
