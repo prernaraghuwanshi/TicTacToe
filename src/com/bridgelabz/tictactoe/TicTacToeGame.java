@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class TicTacToeGame {
+	public enum Player {
+		USER, COMPUTER
+	}
+
 	// Method to create board
 	public static char[] createBoard() {
 		char[] board = new char[10];
@@ -30,7 +34,7 @@ public class TicTacToeGame {
 	}
 
 	// Method for user to make a move
-	public static void userMove(Scanner scannerObj, char[] board, char player) {
+	public static int getUserIndex(Scanner scannerObj, char[] board) {
 		System.out.println("Make your move.\nEnter index ( 1 to 9)");
 		int index = scannerObj.nextInt();
 		if (index < 1 || index > 9) {
@@ -39,8 +43,13 @@ public class TicTacToeGame {
 		}
 		if (!isFreeSpace(board, index)) {
 			System.out.println("Board position is not empty. Try again!");
-			userMove(scannerObj, board, player);
+			getUserIndex(scannerObj, board);
 		}
+		return index;
+	}
+
+	// Method to make a move
+	public static void makeMove(char[] board, int index, char player) {
 		board[index] = player;
 		showBoard(board);
 	}
@@ -61,22 +70,54 @@ public class TicTacToeGame {
 		else
 			tossOutput = "Tails";
 		System.out.println("Toss outcome: " + tossOutput);
-		
+
 		return tossOutput.equals(userTossInput);
+	}
+
+	public static Player whoStarts(Scanner scannerObj) {
+		if (toss(scannerObj))
+			return Player.USER;
+		else
+			return Player.COMPUTER;
+
+	}
+
+	// Winning position decider function
+	public static boolean isWinningPosition(char[] board, char index) {
+		if ((board[1] == index && board[2] == index && board[3] == index)
+				|| (board[4] == index && board[5] == index && board[6] == index)
+				|| (board[7] == index && board[8] == index && board[9] == index)
+				|| (board[1] == index && board[5] == index && board[9] == index)
+				|| (board[3] == index && board[5] == index && board[7] == index)
+				|| (board[1] == index && board[4] == index && board[7] == index)
+				|| (board[2] == index && board[5] == index && board[8] == index)
+				|| (board[3] == index && board[6] == index && board[9] == index))
+			return true;
+		else
+			return false;
 	}
 
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
 		char[] board = createBoard();
-		char player = chooseCharacterForPlayer(scannerObj);
-		char computer = (player == 'X') ? 'O' : 'X';
-		System.out.println("Player chooses: " + player);
+		Player player = whoStarts(scannerObj);
+		char user = chooseCharacterForPlayer(scannerObj);
+		char computer = (user == 'X') ? 'O' : 'X';
+		System.out.println("Player chooses: " + user);
 		System.out.println("Computer character: " + computer);
 		showBoard(board);
-		if (toss(scannerObj)) {
-			// User Wins Toss
-			userMove(scannerObj, board, player);
+
+		while (true) {
+			int userIndex = getUserIndex(scannerObj, board);
+			makeMove(board, userIndex, user);
+			if (isWinningPosition(board, user)) {
+				System.out.println("Player wins");
+				break;
+			}
 		}
+		String currentPlayer = (player == Player.USER) ? "User" : "Computer";
+		System.out.println("Current Player:- " + currentPlayer);
+
 	}
 
 }
