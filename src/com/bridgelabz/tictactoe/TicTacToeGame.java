@@ -33,6 +33,11 @@ public class TicTacToeGame {
 	public static void userMove(Scanner scannerObj, char[] board, char player) {
 		System.out.println("Make your move.\nEnter index ( 1 to 9)");
 		int index = scannerObj.nextInt();
+		if(index<1 || index>9)
+		{
+			System.out.println("Invalid index! Enter again");
+			index = scannerObj.nextInt();
+		}
 		if (board[index] != ' ') {
 			System.out.println("Board position is not empty. Try again!");
 			userMove(scannerObj, board, player);
