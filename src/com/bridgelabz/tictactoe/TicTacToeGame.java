@@ -50,6 +50,22 @@ public class TicTacToeGame {
 		return board[index] == ' ';
 	}
 
+	// Method for toss
+	public static boolean toss(Scanner scannerObj) {
+		System.out.println("Choose Heads or Tails");
+		Scanner scannerObject = new Scanner(System.in);
+		String userTossInput = scannerObject.nextLine();
+		int tossValue = (int) Math.floor(Math.random() * 10) % 2;
+		String tossOutput = "";
+		if (tossValue == 0)
+			tossOutput = "Heads";
+		else
+			tossOutput = "Tails";
+		System.out.println("Toss outcome: " + tossOutput);
+		scannerObject.close();
+		return tossOutput.equals(userTossInput);
+	}
+
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
 		char[] board = createBoard();
@@ -58,7 +74,10 @@ public class TicTacToeGame {
 		System.out.println("Player chooses: " + player);
 		System.out.println("Computer character: " + computer);
 		showBoard(board);
-		userMove(scannerObj, board, player);
+		if (toss(scannerObj)) {
+			// User Wins Toss
+			userMove(scannerObj, board, player);
+		}
 	}
 
 }
