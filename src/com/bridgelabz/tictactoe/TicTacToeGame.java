@@ -9,6 +9,10 @@ public class TicTacToeGame {
 		USER, COMPUTER
 	}
 
+	public enum GameStatus {
+		WIN, TIE, CHANGE_TURN
+	}
+
 	// Method to create board
 	public static char[] createBoard() {
 		char[] board = new char[10];
@@ -36,22 +40,22 @@ public class TicTacToeGame {
 
 	// Method for user to select an index
 	public static int getUserIndex(Scanner scannerObj, char[] board) {
-		System.out.println("Make your move.\nEnter index ( 1 to 9)");
-		int index = scannerObj.nextInt();
-		if (index < 1 || index > 9) {
-			System.out.println("Invalid index! Enter again");
-			index = scannerObj.nextInt();
+		while (true) {
+			System.out.println("Make your move.\nEnter index ( 1 to 9)");
+			int index = scannerObj.nextInt();
+			if (index < 1 || index > 9) {
+				System.out.println("Invalid index! Enter again");
+			} else if (!isFreeSpace(board, index)) {
+				System.out.println("Board position is not empty. Try again!");
+			} else
+				return index;
 		}
-		if (!isFreeSpace(board, index)) {
-			System.out.println("Board position is not empty. Try again!");
-			getUserIndex(scannerObj, board);
-		}
-		return index;
 	}
 
 	// Method to make a move
 	public static void makeMove(char[] board, int index, char player) {
-		board[index] = player;
+		if (isFreeSpace(board, index))
+			board[index] = player;
 	}
 
 	// Method to check free space
@@ -135,6 +139,38 @@ public class TicTacToeGame {
 		return 0;
 	}
 
+	// Method to check game status
+	public static GameStatus getGameStatus(char[] board, int index, char charOfPlayer, Player player) {
+		makeMove(board, index, charOfPlayer);
+		if (isWinningPosition(board, charOfPlayer) && player == Player.USER) {
+			showBoard(board);
+			System.out.println("Player wins!");
+			return GameStatus.WIN;
+		}
+		if (isWinningPosition(board, charOfPlayer) && player == Player.COMPUTER) {
+			showBoard(board);
+			System.out.println("Computer wins!");
+			return GameStatus.WIN;
+		}
+
+		if (isBoardFull(board)) {
+			showBoard(board);
+			System.out.println("It's a tie");
+			return GameStatus.TIE;
+
+		}
+		return GameStatus.CHANGE_TURN;
+	}
+
+	// Method to check if board is filled i.e. tie
+	public static boolean isBoardFull(char[] board) {
+		for (int index = 1; index < board.length; index++) {
+			if (isFreeSpace(board, index))
+				return false;
+		}
+		return true;
+	}
+
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
 		char[] board = createBoard();
@@ -142,15 +178,31 @@ public class TicTacToeGame {
 		char computer = (user == 'X') ? 'O' : 'X';
 		System.out.println("Player chooses: " + user);
 		System.out.println("Computer character: " + computer);
-		showBoard(board);
-		Player p = whoStarts(scannerObj);
-		System.out.println("Starts first:" + p);
-		int index = getUserIndex(scannerObj, board);
-		makeMove(board, index, user);
-		showBoard(board);
-		int compMove = getComputerMove(board, computer, user);
-		makeMove(board, compMove, computer);
-		showBoard(board);
+		Player player = whoStarts(scannerObj);
+		System.out.println("Starts first:" + player);
+		boolean isGameOn = true;
+		GameStatus gameStatus;
+		while (isGameOn) {
+			if (player == Player.USER) {
+				int userMove = getUserIndex(scannerObj, board);
+				gameStatus = getGameStatus(board, userMove, user, player);
+				if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
+					return;
+				System.out.println("Board after USER's move");
+				showBoard(board);
+				player = Player.COMPUTER;
+			} else {
+				int computerMove = getComputerMove(board, computer, user);
+				gameStatus = getGameStatus(board, computerMove, computer, player);
+				if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
+					return;
 
+				System.out.println("Board after COMPUTER's move");
+				showBoard(board);
+				player = Player.USER;
+			}
+			if (gameStatus == GameStatus.CHANGE_TURN)
+				continue;
+		}
 	}
 }
