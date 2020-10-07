@@ -173,36 +173,45 @@ public class TicTacToeGame {
 
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
-		char[] board = createBoard();
-		char user = chooseCharacterForPlayer(scannerObj);
-		char computer = (user == 'X') ? 'O' : 'X';
-		System.out.println("Player chooses: " + user);
-		System.out.println("Computer character: " + computer);
-		Player player = whoStarts(scannerObj);
-		System.out.println("Starts first:" + player);
-		boolean isGameOn = true;
-		GameStatus gameStatus;
-		while (isGameOn) {
-			if (player == Player.USER) {
-				int userMove = getUserIndex(scannerObj, board);
-				gameStatus = getGameStatus(board, userMove, user, player);
-				if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
-					return;
-				System.out.println("Board after USER's move");
-				showBoard(board);
-				player = Player.COMPUTER;
-			} else {
-				int computerMove = getComputerMove(board, computer, user);
-				gameStatus = getGameStatus(board, computerMove, computer, player);
-				if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
-					return;
+		int playMore = 1;
+		while (playMore == 1) {
+			char[] board = createBoard();
+			char user = chooseCharacterForPlayer(scannerObj);
+			char computer = (user == 'X') ? 'O' : 'X';
+			System.out.println("Player chooses: " + user);
+			System.out.println("Computer character: " + computer);
+			Player player = whoStarts(scannerObj);
+			System.out.println("Starts first:" + player);
+			boolean isGameOn = true;
+			GameStatus gameStatus;
+			while (isGameOn) {
+				if (player == Player.USER) {
+					int userMove = getUserIndex(scannerObj, board);
+					gameStatus = getGameStatus(board, userMove, user, player);
+					if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
+						break;
+					System.out.println("Board after USER's move");
+					showBoard(board);
+					player = Player.COMPUTER;
+				} else {
+					int computerMove = getComputerMove(board, computer, user);
+					gameStatus = getGameStatus(board, computerMove, computer, player);
+					if (gameStatus == GameStatus.WIN || gameStatus == GameStatus.TIE)
+						break;
 
-				System.out.println("Board after COMPUTER's move");
-				showBoard(board);
-				player = Player.USER;
+					System.out.println("Board after COMPUTER's move");
+					showBoard(board);
+					player = Player.USER;
+				}
+				if (gameStatus == GameStatus.CHANGE_TURN)
+					continue;
 			}
-			if (gameStatus == GameStatus.CHANGE_TURN)
-				continue;
+			System.out.println("For Another game: Press 1 \nFor Exiting: Press 2");
+			playMore = scannerObj.nextInt();
+			if (playMore == 2) {
+				System.out.println("EXITING!");
+				return;
+			}
 		}
 	}
 }
