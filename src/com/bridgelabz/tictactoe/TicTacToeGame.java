@@ -100,8 +100,14 @@ public class TicTacToeGame {
 		int userWinMove = isWinningMove(board, user);
 		if (userWinMove != 0)
 			return userWinMove;
-		int cornerMove= getCornerMove(board);
-        if(cornerMove!=0) return cornerMove;
+		int cornerMove = getCornerMove(board);
+		if (cornerMove != 0)
+			return cornerMove;
+		if (isFreeSpace(board, 5))
+			return 5;
+		int sideMove = getSideMove(board);
+		if (sideMove != 0)
+			return sideMove;
 		return 0;
 	}
 
@@ -117,6 +123,18 @@ public class TicTacToeGame {
 		return 0;
 	}
 
+	// Side move
+	public static int getSideMove(char[] board) {
+		int[] sides = { 2, 4, 6, 8 };
+
+		for (int index = 0; index < sides.length; index++) {
+			if (isFreeSpace(board, sides[index])) {
+				return sides[index];
+			}
+		}
+		return 0;
+	}
+
 	public static void main(String args[]) {
 		Scanner scannerObj = new Scanner(System.in);
 		char[] board = createBoard();
@@ -125,7 +143,6 @@ public class TicTacToeGame {
 		System.out.println("Player chooses: " + user);
 		System.out.println("Computer character: " + computer);
 		showBoard(board);
-
 		Player p = whoStarts(scannerObj);
 		System.out.println("Starts first:" + p);
 		int index = getUserIndex(scannerObj, board);
