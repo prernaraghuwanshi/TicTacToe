@@ -53,8 +53,7 @@ public class TicTacToeGame {
 	// Method for toss
 	public static boolean toss(Scanner scannerObj) {
 		System.out.println("Choose Heads or Tails");
-		Scanner scannerObject = new Scanner(System.in);
-		String userTossInput = scannerObject.nextLine();
+		String userTossInput = scannerObj.next();
 		int tossValue = (int) Math.floor(Math.random() * 10) % 2;
 		String tossOutput = "";
 		if (tossValue == 0)
@@ -62,7 +61,7 @@ public class TicTacToeGame {
 		else
 			tossOutput = "Tails";
 		System.out.println("Toss outcome: " + tossOutput);
-		scannerObject.close();
+		
 		return tossOutput.equals(userTossInput);
 	}
 
