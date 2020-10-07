@@ -79,22 +79,26 @@ public class TicTacToeGame {
 			return false;
 	}
 
-	// Method for computer move
-	public static int isWinningMove(char[] board, char index) {
+	// Winning move
+	public static int isWinningMove(char[] board, char player) {
 		for (int position = 1; position < board.length; position++) {
 			char[] copyOfBoard = board.clone();
 			if (isFreeSpace(copyOfBoard, position))
-				makeMove(copyOfBoard, position, index);
-			if (isWinningPosition(copyOfBoard, index))
+				makeMove(copyOfBoard, position, player);
+			if (isWinningPosition(copyOfBoard, player))
 				return position;
 		}
 		return 0;
 	}
 
-	public static int getComputerMove(char[] board, char computer) {
+	// Method for computer move
+	public static int getComputerMove(char[] board, char computer, char user) {
 		int winMove = isWinningMove(board, computer);
 		if (winMove != 0)
 			return winMove;
+		int userWinMove = isWinningMove(board, user);
+		if (userWinMove != 0)
+			return userWinMove;
 		return 0;
 	}
 
@@ -112,7 +116,7 @@ public class TicTacToeGame {
 		int index = getUserIndex(scannerObj, board);
 		makeMove(board, index, user);
 		showBoard(board);
-		int compMove = getComputerMove(board, computer);
+		int compMove = getComputerMove(board, computer, user);
 		makeMove(board, compMove, computer);
 		showBoard(board);
 
